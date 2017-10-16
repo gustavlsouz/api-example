@@ -2,7 +2,6 @@ const express = require('express')
 , path = require('path')
 , cookieParser = require('cookie-parser')
 , bodyParser = require('body-parser')
-//, load = require('express-load')
 , mongoose = require('mongoose')
 ;
 

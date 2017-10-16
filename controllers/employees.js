@@ -10,13 +10,11 @@ exports.create = function(req, res) {
 	});
 	
 	if (sum === 100) {
-
-		// let newData = new EmployeesModel.Employees(obj);
 		let newData = new EmployeesModel(obj);
 
 		newData.save(function(err) {
-			if (err) return console.error(err);
-			console.log("new employee saved");
+			if (err) console.error(err)
+			else console.log("new employee saved");
 		});
 
 		res.json({"status": 201, "statusName": "Criado"});
@@ -32,7 +30,6 @@ exports.show = function(req, res) {
 	let user = req.params.user
 	, date = req.params.date
 	;
-	console.log("user: ", user, "date: ",date);
 
 	let query = {"user": user, "date": date};
 
