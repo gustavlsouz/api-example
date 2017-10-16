@@ -1,4 +1,4 @@
-var EmployeesModel = require('../models/employees');
+const EmployeesModel = require('../models/employees');
 
 exports.create = function(req, res) {
 
