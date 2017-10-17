@@ -1,0 +1,16 @@
+{
+    "user": "gustavo.nunes",
+    "date": "2017-10-16",
+    "dataInf": [
+        {
+            "nome": "gustavo",
+            "sobrenome": "souza",
+            "percentParticipacao": 80
+        },
+        {
+            "nome": "lucas",
+            "sobrenome": "silva",
+            "percentParticipacao": 20
+        }
+    ]
+}

@@ -19,7 +19,7 @@ exports.create = (req, res) => {
 			el.sobrenome = string.capitalize(el.sobrenome);
 		});
 
-		obj.createdAt = date.format(new Date(), 'YYYY/MM/DD HH:mm:ss');
+		obj.createdAt = date.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
 		let newData = EmployeesModel(obj);
 
@@ -37,12 +37,11 @@ exports.create = (req, res) => {
 	}
 };
 
-exports.show = (req, res) => {
+exports.read = (req, res) => {
 	let user = req.params.user
 	, date = req.params.date
+	, query = {"user": user, "date": date}
 	;
-
-	let query = {"user": user, "date": date};
 
 	EmployeesModel.find(query)
 	.limit(50)
@@ -50,5 +49,24 @@ exports.show = (req, res) => {
 	.select({"dataInf._id": false, "__v": false})
 	.exec((err, employees) => {
 		res.json(employees);
+	});
+};
+
+exports.update = (req, res) => {
+	let conditions = {"_id": req.body.id}
+	, field = req.body.field
+	, value = req.body.value
+	;
+
+	let callback = (err) => {
+		if (err) {res.json({"status": 304, "description": "Not Modified"});}
+		else res.json({"status": 204});
+	};
+
+	EmployeesModel.findOne(conditions, (err, employee) => {
+		if (err) return next(err);
+		employee[field] = value;
+
+		employee.save(callback);
 	});
 };
