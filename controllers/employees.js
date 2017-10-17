@@ -1,6 +1,10 @@
+const date = require('date-and-time');
+
 const EmployeesModel = require('../models/employees');
 
-exports.create = function(req, res) {
+const string = require('../utils/string');
+
+exports.create = (req, res) => {
 
 	let obj = req.body
 	, sum = 0;
@@ -10,9 +14,16 @@ exports.create = function(req, res) {
 	});
 	
 	if (sum === 100) {
-		let newData = new EmployeesModel(obj);
+		obj.dataInf.forEach((el) => {
+			el.nome = string.capitalize(el.nome);
+			el.sobrenome = string.capitalize(el.sobrenome);
+		});
 
-		newData.save(function(err) {
+		obj.createdAt = date.format(new Date(), 'YYYY/MM/DD HH:mm:ss');
+
+		let newData = EmployeesModel(obj);
+
+		newData.save( err => {
 			if (err) console.error(err)
 			else console.log("new employee saved");
 		});
@@ -26,7 +37,7 @@ exports.create = function(req, res) {
 	}
 };
 
-exports.show = function(req, res) {
+exports.show = (req, res) => {
 	let user = req.params.user
 	, date = req.params.date
 	;
@@ -34,9 +45,10 @@ exports.show = function(req, res) {
 	let query = {"user": user, "date": date};
 
 	EmployeesModel.find(query)
-	.limit(5)
-	.select({"_id": false, "dataInf._id": false, "__v": false})
-	.exec(function(err, employees) {
+	.limit(50)
+	.sort({"_id": -1})
+	.select({"dataInf._id": false, "__v": false})
+	.exec((err, employees) => {
 		res.json(employees);
 	});
 };

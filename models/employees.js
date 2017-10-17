@@ -9,9 +9,9 @@ const data = Schema({
 const employees = Schema({
     user: {type: String, required: true}
     , date: {type: String, required: true}
+    , updatedAt: {type: String}
+    , createdAt: {type: String}
     , dataInf: {type: [data], required: true}
 });
 
-const Employees = db.model("employees", employees);
-
-module.exports = Employees;
+module.exports = db.model("employees", employees);
