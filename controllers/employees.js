@@ -24,11 +24,14 @@ exports.create = (req, res) => {
 		let newEmployee = EmployeesModel(obj);
 
 		newEmployee.save( err => {
-			if (err) console.error(err);
-			else console.log("new employee saved");
+			if (err) {
+				res.status(500).json({"message": err});
+			}
+			else {
+				res.status(201).send();
+			}
 		});
 
-		res.status(201).send();
 	} else {
 		obj.statusName = "ErroDePorcentagem";
 		obj.descricao = "Porcentagem total precisa ser igual 100%.";
@@ -77,6 +80,11 @@ exports.delete = (req, res) => {
 		if (err) {
 			res.status(500).json({"message": err});
 		}
-		res.status(200).json({"_id": doc["_id"], "message": "successfully deleted"});
+		if (doc) {
+			res.status(200).json({"_id": doc["_id"], "message": "successfully deleted"});
+		} else {
+			res.status(500).json({"message":"_id not found"});
+		}
+		
 	});
 };

@@ -15,7 +15,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 
-app.use('/api/employees', employees);
-app.use('/api/employees', employees);
+app.use('/', employees);
 
 module.exports = app;
