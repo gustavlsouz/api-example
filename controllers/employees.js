@@ -21,14 +21,14 @@ exports.create = (req, res) => {
 
 		obj.createdAt = date.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
-		let newData = EmployeesModel(obj);
+		let newEmployee = EmployeesModel(obj);
 
-		newData.save( err => {
-			if (err) console.error(err)
+		newEmployee.save( err => {
+			if (err) console.error(err);
 			else console.log("new employee saved");
 		});
 
-		res.json({"status": 201, "statusName": "Criado"});
+		res.status(201).send();
 	} else {
 		obj.statusName = "ErroDePorcentagem";
 		obj.descricao = "Porcentagem total precisa ser igual 100%.";
@@ -59,8 +59,8 @@ exports.update = (req, res) => {
 	;
 
 	let callback = (err) => {
-		if (err) {res.json({"status": 304, "description": "Not Modified"});}
-		else res.json({"status": 204});
+		if (err) {res.status(500).json({"status": 304, "description": "Not Modified"});}
+		else res.status(204).send();
 	};
 
 	EmployeesModel.findOne(conditions, (err, employee) => {
@@ -68,5 +68,15 @@ exports.update = (req, res) => {
 		employee[field] = value;
 
 		employee.save(callback);
+	});
+};
+
+exports.delete = (req, res) => {
+	let obj = req.body;
+	EmployeesModel.findByIdAndRemove(obj["_id"], (err, doc) => {
+		if (err) {
+			res.status(500).json({"message": err});
+		}
+		res.status(200).json({"_id": doc["_id"], "message": "successfully deleted"});
 	});
 };
