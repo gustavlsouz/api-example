@@ -1,42 +1,23 @@
-const date = require('date-and-time');
+// const date = require('date-and-time');
+const Q = require('q');
 
-const EmployeesModel = require('../models/employees');
+const EmployeesModel = require('./../models/employees');
 
-const string = require('../utils/string');
+const string = require('./../utils/string');
+const employeeSchema = require('./../utils/employees');
 
 exports.create = (req, res) => {
-
-	let obj = req.body
-	, sum = 0;
-	
-	obj.dataInf.forEach((el) => {
-		sum += el.percentParticipacao;
-	});
-	
-	if (sum === 100) {
-		obj.dataInf.forEach((el) => {
-			el.nome = string.capitalize(el.nome);
-			el.sobrenome = string.capitalize(el.sobrenome);
-		});
-
-		obj.createdAt = date.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
-
-		let newEmployee = EmployeesModel(obj);
-
-		newEmployee.save( err => {
-			if (err) {
-				res.status(500).json({"message": err});
-			}
-			else {
+	if ( typeof req.body === 'object' ) {
+		employeeSchema.readObject(req.body)
+			.then(() => {
 				res.status(201).send();
-			}
-		});
-
+			})
+			.catch(errors => {
+				res.status(500).json({ error: errors.toString() });
+			})
+		
 	} else {
-		obj.statusName = "ErroDePorcentagem";
-		obj.descricao = "Porcentagem total precisa ser igual 100%.";
-		obj.totalPercent = sum;
-		res.json(obj);
+		res.status(500).send();
 	}
 };
 
@@ -61,7 +42,7 @@ exports.update = (req, res) => {
 	, value = req.body.value
 	;
 
-	let callback = (err) => {
+	const callback = (err) => {
 		if (err) {res.status(500).json({"status": 304, "description": "Not Modified"});}
 		else res.status(204).send();
 	};
