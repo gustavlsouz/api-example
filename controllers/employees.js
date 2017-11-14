@@ -26,14 +26,23 @@ exports.read = (req, res) => {
 	, date = req.params.date
 	, query = {"user": user, "date": date}
 	;
-
-	EmployeesModel.find(query)
-	.limit(50)
-	.sort({"_id": -1})
-	.select({"dataInf._id": false, "__v": false})
-	.exec((err, employees) => {
-		res.json(employees);
-	});
+	employeeSchema.checkParams(query)
+		.then(() => {
+			EmployeesModel.find(query)
+				.limit(50)
+				.sort({ "_id": -1 })
+				.select({ "dataInf._id": false, "__v": false })
+				.exec((err, employees) => {
+					if (!err) {
+						res.status(200).json(employees);
+					} else {
+						res.status(200).json({ error: err.toString() });
+					}
+				});
+		})
+		.catch((err) => {
+			res.status(500).json({ error: err.toString() });
+		})
 };
 
 exports.update = (req, res) => {

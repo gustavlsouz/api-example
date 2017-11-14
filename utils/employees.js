@@ -66,6 +66,9 @@ const readObject = (body) => {
     let employeeObj = body;
     checkEmployeeSchema(employeeObj)
         .then(checkPercent)
+        .catch(err => {
+            deffered.reject(err);
+        })
         .then(employeeObj => {
             employeeObj.createdAt = date.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
 
@@ -79,11 +82,22 @@ const readObject = (body) => {
             });
             return deffered.promise;
         })
-        .catch(err => {
-            deffered.reject(err);
-        })
 
     return deffered.promise;
-}
+};
+
+const checkParams = (params) => {
+    let deffered = Q.defer();
+
+    let result = Joi.validate(params, employeeSchema);
+    if (result.error instanceof Error) {
+        deffered.reject(result.error);
+    } else {
+        deffered.resolve(true);
+    }
+
+    return deffered.promise;
+};
 
 exports.readObject = readObject;
+exports.checkParams = checkParams;
