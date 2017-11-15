@@ -11,6 +11,7 @@ const employees = Schema({
     , date: {type: String, required: true}
     , updatedAt: {type: String}
     , createdAt: {type: String}
+    , createdAtHour: {type: String}
     , dataInf: {type: [data], required: true}
 });
 

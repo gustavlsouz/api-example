@@ -58,19 +58,19 @@ const checkPercent = (employeeObj) => {
     return deffered.promise;
 };
 
-const readObject = (body) => {
+const readObject = (employeeObj) => {
     let deffered = Q.defer();
 
-    // let errors = [];
-
-    let employeeObj = body;
     checkEmployeeSchema(employeeObj)
         .then(checkPercent)
         .catch(err => {
             deffered.reject(err);
         })
         .then(employeeObj => {
-            employeeObj.createdAt = date.format(new Date(), 'YYYY-MM-DD HH:mm:ss');
+            let now = new Date();
+            employeeObj.createdAt = date.format(now, 'YYYY-MM-DD');
+            employeeObj.createdAtHour = date.format(now, 'HH:mm:ss');
+            employeeObj.date = date.format(employeeObj.date, 'YYYY-MM-DD');
 
             let newEmployee = EmployeesModel(employeeObj);
             newEmployee.save(err => {
