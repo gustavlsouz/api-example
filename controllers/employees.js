@@ -52,7 +52,12 @@ exports.update = (req, res) => {
 	;
 
 	const callback = (err) => {
-		if (err) {res.status(500).json({"status": 304, "description": "Not Modified"});}
+		if (err) {
+			res.status(304).json({
+				"status": 304,
+				"description": "Not Modified"
+			});
+		}
 		else res.status(204).send();
 	};
 
