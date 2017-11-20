@@ -5,12 +5,12 @@
         {
             "nome": "gustavo",
             "sobrenome": "souza",
-            "percentParticipacao": 80
+            "percentParticipacao": 50
         },
         {
-            "nome": "lucas",
-            "sobrenome": "silva",
-            "percentParticipacao": 20
+            "nome": "  lucas",
+            "sobrenome": "silva ",
+            "percentParticipacao": 50
         }
     ]
 }

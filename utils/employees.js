@@ -3,19 +3,19 @@ const Q = require('q');
 const date = require('date-and-time');
 
 const string = require('./string');
+const re = require('./regex');
 
 const EmployeesModel = require('./../models/employees');
 
-const re = /^[a-zA-Z ]{3,30}$/;
 
 const dataSchema = Joi.object().keys({
-    nome: Joi.string().trim().regex(re).required(),
-    sobrenome: Joi.string().trim().regex(re).max(30).required(),
+    nome: Joi.string().trim().regex(re.name).required(),
+    sobrenome: Joi.string().trim().regex(re.name).max(30).required(),
     percentParticipacao: Joi.number().precision(4).positive().max(100)
 });
 
 const employeeSchema = Joi.object().keys({
-    user: Joi.string().trim().min(3).max(30).required(),
+    user: Joi.string().trim().regex(re.user).min(3).max(30).required(),
     date: Joi.date().min('1900-01-01').required(),
     dataInf: Joi.array().items(dataSchema)
 });
