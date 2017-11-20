@@ -1,9 +1,7 @@
-// const date = require('date-and-time');
 const Q = require('q');
 
 const EmployeesModel = require('./../models/employees');
 
-const string = require('./../utils/string');
 const employeeSchema = require('./../utils/employees');
 
 exports.create = (req, res) => {

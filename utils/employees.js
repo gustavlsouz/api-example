@@ -2,18 +2,20 @@ const Joi = require('joi');
 const Q = require('q');
 const date = require('date-and-time');
 
+const string = require('./string');
+
 const EmployeesModel = require('./../models/employees');
 
-const re = /^[a-zA-Z]{3,30}$/;
+const re = /^[a-zA-Z ]{3,30}$/;
 
 const dataSchema = Joi.object().keys({
-    nome: Joi.string().regex(re).required(),
-    sobrenome: Joi.string().regex(re).max(30).required(),
+    nome: Joi.string().trim().regex(re).required(),
+    sobrenome: Joi.string().trim().regex(re).max(30).required(),
     percentParticipacao: Joi.number().precision(4).positive().max(100)
 });
 
 const employeeSchema = Joi.object().keys({
-    user: Joi.string().min(3).max(30).required(),
+    user: Joi.string().trim().min(3).max(30).required(),
     date: Joi.date().min('1900-01-01').required(),
     dataInf: Joi.array().items(dataSchema)
 });
@@ -33,7 +35,7 @@ const checkEmployeeSchema = (employeeObj) => {
     return deffered.promise;
 };
 
-const checkPercent = (employeeObj) => {
+const checkDataObj = (employeeObj) => {
     let deffered = Q.defer();
     
     let sum = 0
@@ -43,6 +45,8 @@ const checkPercent = (employeeObj) => {
         let el = employeeObj.dataInf[idx];
         if (typeof el.percentParticipacao === 'number') {
             sum += el.percentParticipacao;
+            el.nome = string.capitalize(el.nome);
+            el.sobrenome = string.capitalize(el.sobrenome);
         } else {
             ok = false;
             break;
@@ -62,7 +66,7 @@ const readObject = (employeeObj) => {
     let deffered = Q.defer();
 
     checkEmployeeSchema(employeeObj)
-        .then(checkPercent)
+        .then(checkDataObj)
         .catch(err => {
             deffered.reject(err);
         })
