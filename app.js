@@ -7,7 +7,7 @@ const express = require('express')
 
 global.db = global.db = mongoose.createConnection('mongodb://localhost/api-example');
 
-const employees = require('./routes/employees');
+const employeesRoutes = require('./routes/employees');
 
 const app = express();
 
@@ -15,6 +15,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 
-app.use('/', employees);
+app.use('/', employeesRoutes);
 
 module.exports = app;

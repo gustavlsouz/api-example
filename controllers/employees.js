@@ -7,14 +7,19 @@ const employeeSchema = require('./../utils/employees');
 const re = require('./../utils/regex');
 
 exports.create = (req, res) => {
+	
+	const onError = errors => {
+		res.status(500).json({ error: errors.toString() });
+	};
+
+	const onOk = () => {
+		res.status(201).send();
+	};
+
 	if ( typeof req.body === 'object' ) {
 		employeeSchema.readObject(req.body)
-			.then(() => {
-				res.status(201).send();
-			})
-			.catch(errors => {
-				res.status(500).json({ error: errors.toString() });
-			})
+			.then(onOk)
+			.catch(onError)
 		
 	} else {
 		res.status(500).send();
@@ -22,28 +27,35 @@ exports.create = (req, res) => {
 };
 
 exports.read = (req, res) => {
+
+	const find = (query) => {
+		EmployeesModel.find(query)
+			.limit(50)
+			.sort({ "_id": -1 })
+			.select({ "dataInf._id": false, "__v": false })
+			.exec(onFind);
+	};
+
+	const onFind = (err, employees) => {
+		if (!err) {
+			res.status(200).json(employees);
+		} else {
+			res.status(200).json({ error: err.toString() });
+		}
+	};
+
+	const onError = (err) => {
+		res.status(500).json({ error: err.toString() });
+	};
+
 	let user = req.params.user
 	, date = req.params.date;
 
 	if (re.user.test(user) && re.date.test(date) ) {
 		let query = { "user": user, "date": date };
 		employeeSchema.checkParams(query)
-			.then(() => {
-				EmployeesModel.find(query)
-					.limit(50)
-					.sort({ "_id": -1 })
-					.select({ "dataInf._id": false, "__v": false })
-					.exec((err, employees) => {
-						if (!err) {
-							res.status(200).json(employees);
-						} else {
-							res.status(200).json({ error: err.toString() });
-						}
-					});
-			})
-			.catch((err) => {
-				res.status(500).json({ error: err.toString() });
-			})
+			.then(() => { find(query); })
+			.catch(onError)
 	} else {
 			res.status(500).send();
 	}
@@ -51,15 +63,25 @@ exports.read = (req, res) => {
 };
 
 exports.update = (req, res) => {
-	let id = req.body.id
-		, field = req.body.field
-		;
 
 	const onSave = (err) => {
 		if (err) {
 			res.status(304).json({ error: err.toString() });
 		} else res.status(204).send();
 	};
+
+	const sendError = (err) => {
+		if (err instanceof Error) {
+			res.status(500).json({ error: err.toString()});
+		} else {
+			res.status(500).send();
+		}
+	};
+
+	let id = req.body.id
+		, field = req.body.field
+		;
+
 	if ( re.id.test(id) && re.field.test(field) ) {
 
 		let fieldFilter = Object.keys(EmployeesModel.schema.paths).filter( el => el === field);
@@ -68,18 +90,28 @@ exports.update = (req, res) => {
 			let query = { "_id": id }
 				, value = req.body.value
 				;
+			
+			const onFindOne = (err, employee) => {
+				if (err) {
+					sendError(err);
+				} else if (employee) {
+					employee[field] = value;
+					employee.save(onSave);
+				} else {
+					sendError(new Error(`Registro não encontrado.`));
+				}
+			};
 
-			EmployeesModel.findOne(query, (err, employee) => {
-				if (err) return next(err);
-				employee[field] = value;
-
-				employee.save(onSave);
-			});
+			EmployeesModel.findOne(query, onFindOne);
 		} else {
-			res.status(500).send();
+			sendError(new Error(`Field não encontrado`));
 		}
 	} else {
-		res.status(500).send();
+		if (!re.id.test(id)) {
+			sendError(new Error(`ID inválido`));
+		} else if (!re.field.test(field)) {
+			sendError(new Error(`Field inválido`));
+		}
 	}
 
 };
