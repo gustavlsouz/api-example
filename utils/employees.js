@@ -70,7 +70,7 @@ const readObject = (employeeObj) => {
         if (err) {
             deffered.reject(err);
         } else {
-            deffered.resolve(true);
+            deffered.resolve();
         }
     };
 

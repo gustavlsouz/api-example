@@ -37,10 +37,12 @@ exports.read = (req, res) => {
 	};
 
 	const onFind = (err, employees) => {
-		if (!err) {
-			res.status(200).json(employees);
-		} else {
+		if (err) {
 			res.status(200).json({ error: err.toString() });
+		} else if (employees.length === 0) {
+			res.status(500).json({ msg: `Registro(s) não encontrado(s).` });
+		} else {
+			res.status(200).json(employees);
 		}
 	};
 
@@ -96,6 +98,7 @@ exports.update = (req, res) => {
 					sendError(err);
 				} else if (employee) {
 					employee[field] = value;
+					employee.updatedAt = new Date();
 					employee.save(onSave);
 				} else {
 					sendError(new Error(`Registro não encontrado.`));
