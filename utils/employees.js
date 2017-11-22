@@ -76,16 +76,14 @@ const readObject = (employeeObj) => {
 
     const save = employeeObj => {
         let newEmployee = EmployeesModel(employeeObj);
-        newEmployee.save(onSave)
+        newEmployee.save(onSave);
     };
 
     checkEmployeeSchema(employeeObj)
         .then(checkDataObj)
         .then(save)
-        .catch(err => {
-            deffered.reject(err);
-        });
-        
+        .catch(deffered.reject);
+
     return deffered.promise;
 };
 
@@ -96,7 +94,7 @@ const checkParams = (params) => {
     if (result.error instanceof Error) {
         deffered.reject(result.error);
     } else {
-        deffered.resolve(true);
+        deffered.resolve();
     }
 
     return deffered.promise;
