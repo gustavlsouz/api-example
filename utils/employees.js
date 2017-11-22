@@ -55,6 +55,7 @@ const checkDataObj = (employeeObj) => {
     if (!ok) {
         deffered.reject(new Error("Percentual deve ser Number"));
     } else if (sum === 100) {
+        employeeObj.createdAt = new Date();
         deffered.resolve(employeeObj);
     } else {
         deffered.reject(new Error("Total da porcentagem deve ser igual a 100."));
@@ -65,27 +66,26 @@ const checkDataObj = (employeeObj) => {
 const readObject = (employeeObj) => {
     let deffered = Q.defer();
 
+    const onSave = err => {
+        if (err) {
+            deffered.reject(err);
+        } else {
+            deffered.resolve(true);
+        }
+    };
+
+    const save = employeeObj => {
+        let newEmployee = EmployeesModel(employeeObj);
+        newEmployee.save(onSave)
+    };
+
     checkEmployeeSchema(employeeObj)
         .then(checkDataObj)
-        .then(employeeObj => {
-            // let deffered = Q.defer();
-            let now = new Date();
-            employeeObj.createdAt = now;
-            // employeeObj.createdAtHour = date.format(now, 'HH:mm:ss');
-            // employeeObj.date = date.format(employeeObj.date, 'YYYY-MM-DD');
-
-            let newEmployee = EmployeesModel(employeeObj);
-            newEmployee.save(err => {
-                if (err) {
-                    deffered.reject(err);
-                } else {
-                    deffered.resolve(true);
-                }
-            })
-        })
+        .then(save)
         .catch(err => {
             deffered.reject(err);
         });
+        
     return deffered.promise;
 };
 
