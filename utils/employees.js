@@ -67,14 +67,12 @@ const readObject = (employeeObj) => {
 
     checkEmployeeSchema(employeeObj)
         .then(checkDataObj)
-        .catch(err => {
-            deffered.reject(err);
-        })
         .then(employeeObj => {
+            // let deffered = Q.defer();
             let now = new Date();
-            employeeObj.createdAt = date.format(now, 'YYYY-MM-DD');
-            employeeObj.createdAtHour = date.format(now, 'HH:mm:ss');
-            employeeObj.date = date.format(employeeObj.date, 'YYYY-MM-DD');
+            employeeObj.createdAt = now;
+            // employeeObj.createdAtHour = date.format(now, 'HH:mm:ss');
+            // employeeObj.date = date.format(employeeObj.date, 'YYYY-MM-DD');
 
             let newEmployee = EmployeesModel(employeeObj);
             newEmployee.save(err => {
@@ -83,10 +81,11 @@ const readObject = (employeeObj) => {
                 } else {
                     deffered.resolve(true);
                 }
-            });
-            return deffered.promise;
+            })
         })
-
+        .catch(err => {
+            deffered.reject(err);
+        });
     return deffered.promise;
 };
 
