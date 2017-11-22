@@ -8,10 +8,9 @@ const data = Schema({
 
 const employees = Schema({
     user: {type: String, required: true}
-    , date: {type: String, required: true}
-    , updatedAt: {type: String}
-    , createdAt: {type: String}
-    , createdAtHour: {type: String}
+    , date: {type: Date, required: true}
+    , updatedAt: {type: Date}
+    , createdAt: {type: Date}
     , dataInf: {type: [data], required: true}
 });
 
