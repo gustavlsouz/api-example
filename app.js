@@ -1,5 +1,4 @@
 const express = require('express')
-, path = require('path')
 , cookieParser = require('cookie-parser')
 , bodyParser = require('body-parser')
 , mongoose = require('mongoose')
